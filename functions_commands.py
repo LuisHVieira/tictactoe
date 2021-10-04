@@ -1,4 +1,5 @@
 from discord.ext import commands
+from xo.game import Game
 
 bot = commands.Bot(command_prefix="$")
 players = []
@@ -8,7 +9,9 @@ rounds = []
 async def play(ctx, *args):
 
 	global status
+	global game
 	status = 0
+	game = Game()
 
 	if len(args) == 2:
 
@@ -17,14 +20,14 @@ async def play(ctx, *args):
 
 		if players[0] != players[1]:			
 
-			response_players = "Player X: " + players[0] + "Player O: " +  players[1]
+			response_players = "Player X: " + players[0] + " Player O: " +  players[1]
 			await ctx.channel.send(response_players)
 			status = get_status(1)
+			game = Game()
+			game.start('x')
 
 		else:
 			await ctx.channel.send('Invalid Players')
-
-		#playing  get players function 	
 
 	else:
 		await ctx.channel.send("Invalid Command") 
@@ -36,21 +39,60 @@ async def gameplay(message):
 	msg_mention = mention(message.author.mention)
 	msg_content = message.content
 
-	if msg_content == "Player X: " + players[0] + "Player O: " +  players[1]:
+	if msg_content == "Player X: " + players[0] + " Player O: " +  players[1]:
 		await message.channel.send(players[0] + ' faça sua jogada: ')
 
 	if status == 1:
 		if len(rounds) % 2 == 0:	
 			if msg_mention == players[0]:
-				datas = validate_played(message.content)
-				rounds.append('x')
-				await message.channel.send(players[1] + ' faça sua jogada: ')
+				datas = validate_played(msg_content)
+				move = game.moveto(datas[0], datas[1])
+				await message.channel.send(game.board.toascii())
+				if move['name'] == 'next-turn':
+					await message.channel.send(players[1] + ' faça sua jogada: ')
+					rounds.append('x')
+
+				elif move['name'] == 'invalid-move':
+					await message.channel.send(players[0] + ' jogue novamente: ')
+
+				elif move['name'] == 'gameover':
+					if move['reason'] == 'winner':
+						await message.channel.send(players[0] + ' você venceu!')
+
+					else:
+						await message.channel.send('Deu Velha!')
+
+					#clear array rounds, because start next play with other play of the called
+					del rounds[:]
+					
+			elif msg_mention == players[1]:
+				await message.channel.send("Não é a sua vez")
+
 
 		else:
 			if msg_mention == players[1]:
 				datas = validate_played(message.content)
-				rounds.append('o')
-				await message.channel.send(players[0] + ' faça sua jogada: ')
+				move = game.moveto(datas[0], datas[1])
+				await message.channel.send(game.board.toascii())
+				if move['name'] == 'next-turn':
+					rounds.append('o')
+					await message.channel.send(players[0] + ' faça sua jogada: ')
+
+				elif move['name'] == 'invalid-move':
+					await message.channel.send(players[1] + ' jogue novamente: ')
+
+				elif move['name'] == 'gameover':
+					if move['reason'] == 'winner':
+						await message.channel.send(players[1] + ' você venceu!')
+
+					else:
+						await message.channel.send('Deu Velha!')
+
+					#clear array rounds, because start next play with other play of the called
+					del rounds[:]
+
+			elif msg_mention == players[0]:
+				await message.channel.send("Não é a sua vez")
 
 
 def mention(msg_mention):
@@ -67,16 +109,16 @@ def mention(msg_mention):
 def get_status(status):
 	return status
 
-def get_rounds(rounds):
-	return rounds
-
 def validate_played(message):
 
 	pos_played = []
 
 	for pos_play in list(message):
 		try:
-			pos_play = int(pos_play)
+			if pos_play == '0':
+				pos_play = 4
+			else:
+				pos_play = int(pos_play)
 		except Exception as e:
 			pos_play = -1
 
