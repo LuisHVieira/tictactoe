@@ -2,6 +2,7 @@ from discord.ext import commands
 
 bot = commands.Bot(command_prefix="$")
 players = []
+rounds = []
 
 @bot.command(name='play', help='Para jogar faça menção aos dois jogadores.', brief='Inicia o jogo')
 async def play(ctx, *args):
@@ -32,22 +33,25 @@ async def play(ctx, *args):
 @bot.listen('on_message')
 async def gameplay(message):
 
-	rounds = 0
+	msg_mention = mention(message.author.mention)
+	msg_content = message.content
 
-	if message.content == "Player X: " + players[0] + "Player O: " +  players[1]:
+	if msg_content == "Player X: " + players[0] + "Player O: " +  players[1]:
 		await message.channel.send(players[0] + ' faça sua jogada: ')
 
-	msg_mention = mention(message.author.mention)
-
 	if status == 1:
-		if rounds % 2 == 0:
+		if len(rounds) % 2 == 0:	
 			if msg_mention == players[0]:
-				print('te')
+				datas = validate_played(message.content)
+				rounds.append('x')
+				await message.channel.send(players[1] + ' faça sua jogada: ')
 
 		else:
-			if message.author.mention == players[1]:
-				pass
-	
+			if msg_mention == players[1]:
+				datas = validate_played(message.content)
+				rounds.append('o')
+				await message.channel.send(players[0] + ' faça sua jogada: ')
+
 
 def mention(msg_mention):
 	split_msg_metion = msg_mention.split('@')
@@ -61,7 +65,27 @@ def mention(msg_mention):
 	return add_mention
 
 def get_status(status):
-	return status;
+	return status
+
+def get_rounds(rounds):
+	return rounds
+
+def validate_played(message):
+
+	pos_played = []
+
+	for pos_play in list(message):
+		try:
+			pos_play = int(pos_play)
+		except Exception as e:
+			pos_play = -1
+
+		if pos_play > 0:
+			pos_played.append(pos_play)
+			if len(pos_played) == 2:
+				break
+
+	return pos_played
 
 
 def run(token):
