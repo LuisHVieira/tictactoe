@@ -1,18 +1,9 @@
-from discord.ext import commands
-import json 
 import functions_commands as fc
+from config import Tokens as t
 
-#archive with tokens
-archive = open('tokens.json', )
-data = json.load(archive)
+#path
+path = "env/tokens.json"
 
-#disc tokens
-tokenDisc = data['discord_token']
-serverName = data['server_name']
+t.getTokens(path)
 
-
-"""@bot.command(name='ping')
-async def teste(ctx):
-	await ctx.channel.send(ctx.author.mention)"""
-	
-fc.run(tokenDisc)
+fc.run(t.discord)
