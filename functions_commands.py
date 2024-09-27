@@ -1,7 +1,10 @@
-from discord.ext import commands
 from xo.game import Game
+from config import Config as c
 
-bot = commands.Bot(command_prefix="$")
+prefix = "$"
+bot = c.createBot(prefix)
+
+
 players = []
 rounds = []
 

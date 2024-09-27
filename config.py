@@ -1,9 +1,11 @@
 import json 
+from discord.ext import commands
 
-class Tokens():
+class Config:
 
     discord = ""
     server = ""
+    bot = None
 
     @classmethod
     def getTokens(cls, path):
@@ -17,6 +19,31 @@ class Tokens():
             
         except Exception as e:
             print(e)
+    
+
+    @classmethod
+    def createBot(cls, prefix:str, intents):
+        return commands.Bot(command_prefix=prefix, intents=intents) 
+
+    @classmethod
+    def setBot(cls, bot):
+        cls.bot = bot
+
+    @classmethod
+    def getBot(cls):
+        return cls.bot
+         
+
+    @classmethod
+    def runBot(cls, bot):
+        return bot.run(cls.discord)
+
+    
+
+
+    
+
+
     
 
    

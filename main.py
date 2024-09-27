@@ -1,9 +1,11 @@
-import functions_commands as fc
-from config import Tokens as t
+from config import Config as c
+from botComands import *
 
 #path
 path = "env/tokens.json"
 
-t.getTokens(path)
+c.getTokens(path)
 
-fc.run(t.discord)
+bot = c.getBot()
+
+c.runBot(bot)
