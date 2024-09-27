@@ -23,20 +23,12 @@ class Config:
 
     @classmethod
     def createBot(cls, prefix:str, intents):
-        return commands.Bot(command_prefix=prefix, intents=intents) 
-
-    @classmethod
-    def setBot(cls, bot):
-        cls.bot = bot
-
-    @classmethod
-    def getBot(cls):
+        cls.bot = commands.Bot(command_prefix=prefix, intents=intents) 
         return cls.bot
-         
 
     @classmethod
-    def runBot(cls, bot):
-        return bot.run(cls.discord)
+    def runBot(cls):
+        return cls.bot.run(cls.discord)
 
     
 

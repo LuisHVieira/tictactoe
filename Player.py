@@ -1,12 +1,10 @@
-class Player:
+from discord.ext import commands
 
-    # status = 0
+class Player (commands.Converter):
+    async def convert(self, ctx, argument):
+        p1 = ctx.author.name
+
+        p2 = ctx.message.raw_mentions
     
-    def __init__(self, id, name):
-        self.id = id
-        self.name = name
 
-
-# TESTE
-p = Player(1, "name")
-print(p.name, p.id)
+        return p1, p2

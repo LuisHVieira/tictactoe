@@ -6,6 +6,4 @@ path = "env/tokens.json"
 
 c.getTokens(path)
 
-bot = c.getBot()
-
-c.runBot(bot)
+c.runBot()
