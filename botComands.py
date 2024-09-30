@@ -10,6 +10,7 @@ bot = c.createBot(prefix, intents)
 
 @bot.command()
 async def test(ctx, *, reason: Player):
+    
     await ctx.send(reason)
     
 
