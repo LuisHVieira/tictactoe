@@ -29,9 +29,34 @@ async def pos(ctx, *args):
     row = int(args[0])
     col = int(args[1])
 
-    g.move(row, col, 'x')
+    p1, p2 = Player.get_players()
+    player_symbol = dict(player = None, symbol = '', valid = False)
 
-    await ctx.send(f'{g.paint()}')
+    if ctx.message.author == p2:
+        player_symbol = g.move(row, col, 'x', p2)  
+           
+    elif ctx.message.author == p1:
+        player_symbol = g.move(row, col, 'o', p1)
+   
+    
+   
+    if player_symbol['player'] != None and player_symbol['symbol'] != '':
+        if player_symbol['valid']:
+            await ctx.send(g.check_game(player_symbol['player'], player_symbol['symbol']))
+        else:
+            await ctx.send(f'Jogada | Posição Inválida')
+
+        await ctx.send(f'{g.paint()}')
+    else:
+        await ctx.send(f'Jogador Inválido!!!')
+
+
+    if g.end == True:
+        g.reset()
+
+
+    
+    
     
 
 
