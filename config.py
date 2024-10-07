@@ -28,6 +28,7 @@ class Config:
 
     @classmethod
     def runBot(cls):
+        print('Running...')
         return cls.bot.run(cls.discord)
 
     
